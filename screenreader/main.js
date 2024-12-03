@@ -1,23 +1,3 @@
-function gradiente(num, tipo) {
-    let fim;
-    let comeco;
-    if (num <= 128) {
-        fim = 255;
-        comeco = num * 2;
-    }
-    if (num > 128) {
-        comeco = 255;
-        fim = 510 - (2 * num);
-    }
-
-    if (num === "N/A") { return "rgb(128,128,128)" }
-
-    if (tipo === "rg") { return `rgb(${fim},${comeco},0)` }
-    if (tipo === "rb") { return `rgb(${fim},0,${comeco})` }
-    if (tipo === "bg") { return `rgb(0,${fim},${comeco})` }
-    if (tipo === "noir") { return `rgb(${num},${num},${num})` }
-}
-
 let elementos = [];
 let tabelaObj = [[], [], [], [], [], [], [], [], []];
 data.map(item => {
@@ -35,7 +15,6 @@ data.map(item => {
         densidade: item.density == "" ? "***" : item.density,
         camadas: item.electronicConfiguration,
         eletroneg: item.electronegativity === "" ? "N/A" : item.electronegativity,
-        elScale: item.electronegativity === "" ? "N/A" : Math.round((item.electronegativity - 0.7) * 77.2),
     });
 });
 elementos.map(elementos => {
@@ -101,36 +80,22 @@ function criarElem(tag, classe = null, atrib = null) {
     return elem;
 }
 
-function criarElemento(data, eletroneg = true, tipoEl = "noir", cpk = false) {
-    // let cor = eletroneg ? gradiente(data.elScale, tipoEl) : `#${data.cor}`;
+function criarElemento(data) {
     let cor = `#${data.cor}`;
-    if (cpk) {
-        cor = `#${data.corCpk}`;
-    }
-    if (eletroneg) {
-        cor = gradiente(data.elScale, tipoEl);
-    }
-
-    let preto = eletroneg && tipoEl == "noir" && data.elScale < 80 && !cpk;
 
     let elem = criarElem("div", "elem", [["id", data.simbolo]]);
-    let nome = criarElem("p", preto ? "nome branco" : "nome");
+    let nome = criarElem("p", "nome");
     nome.innerHTML = data.simbolo;
-    let numero = criarElem("p", preto ? "numero branco" : "numero");
+    let numero = criarElem("p", "numero");
     numero.innerHTML = data.num;
-    let massa = criarElem("p", preto ? "massa branco" : "massa");
-    if (eletroneg) {
-        massa.innerHTML = data.eletroneg;
-    }
-    else {
-        massa.innerHTML = typeof data.massa === "string" ? parseFloat(data.massa).toFixed(2) : `(${data.massa})`;
-    }
+    let massa = criarElem("p", "massa");
+    massa.innerHTML = typeof data.massa === "string" ? parseFloat(data.massa).toFixed(2) : `(${data.massa})`;
 
     elem.appendChild(numero);
     elem.appendChild(nome);
     elem.appendChild(massa);
 
-    elem.style.backgroundColor = cor;
+    // elem.style.backgroundColor = cor;
     elem.info = data;
 
     return elem;
@@ -156,7 +121,7 @@ function criarInfo(info, dado) {
 }
 
 
-function criarTabela(eletroneg, tipoEl,cpk) {
+function criarTabela() {
     periodos.forEach(linha => {
         linha[1].forEach(elem => {
             switch (elem.simbolo) {
@@ -166,7 +131,7 @@ function criarTabela(eletroneg, tipoEl,cpk) {
 
                 default: break;
             }
-            linha[0].appendChild(criarElemento(elem, eletroneg, tipoEl,cpk));
+            linha[0].appendChild(criarElemento(elem));
         });
     });
 
@@ -174,7 +139,7 @@ function criarTabela(eletroneg, tipoEl,cpk) {
         elem.addEventListener("click", function () { mostrarElem(elem); }, false);
     });
 }
-function limparTabela() {
+function limparTabela(){
     periodos.forEach(linha => {
         linha[0].innerHTML = "";
     });
@@ -196,7 +161,7 @@ function mostrarElem(elem) {
     elemMassa.innerHTML = typeof info.massa === "string" ? parseFloat(info.massa).toFixed(2) : `(${info.massa})`;
     camadas.innerHTML = info.camadas;
 
-    elemBig.style.backgroundColor = `#${info.cor}`;
+    // elemBig.style.backgroundColor = `#${info.cor}`;
 
     document.getElementById("text").innerHTML = "";
 
@@ -211,54 +176,5 @@ function mostrarElem(elem) {
     criarInfo("Densidade", info.densidade + "g/cm³");
 }
 
-criarTabela(false, "noir");
+criarTabela();
 mostrarElem(document.getElementById("H"));
-
-const inputEl = document.getElementById("eletroneg");
-const inputCPK = document.getElementById("cpk");
-const grad = document.querySelectorAll("#gradientes input")
-
-let eletroOn = false;
-let CpkOn = false;
-let tipoGrad = "rg"
-
-inputEl.addEventListener("input", function () {
-    limparTabela();
-
-    if (eletroOn) {
-        eletroOn = false;
-        criarTabela(eletroOn, tipoGrad, CpkOn);
-    }
-    else {
-        eletroOn = true;
-        criarTabela(eletroOn, tipoGrad, CpkOn);
-    }
-
-});
-
-inputCPK.addEventListener("input", function () {
-    limparTabela();
-
-    if (CpkOn) {
-        CpkOn = false;
-        criarTabela(eletroOn, tipoGrad, CpkOn);
-    }
-    else {
-        CpkOn = true;
-        criarTabela(eletroOn, tipoGrad, CpkOn);
-    }
-
-});
-
-grad.forEach(element => {
-    element.addEventListener("input", function () {
-        tipoGrad = this.value
-        limparTabela();
-        criarTabela(eletroOn, tipoGrad, CpkOn);
-
-    })
-});
-
-inputEl.checked = false;
-inputCPK.checked = false;
-document.getElementById("checked").checked = true;
