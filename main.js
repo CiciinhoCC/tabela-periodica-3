@@ -38,18 +38,32 @@ data.map(item => {
         elScale: item.electronegativity === "" ? "N/A" : Math.round((item.electronegativity - 0.7) * 77.2),
     });
 });
+
+cores = {
+    ametal: "328da8",
+    nobre: "a35b12",
+    alcalino: "c3cc1b",
+    alcterroso: "5fcc1b",
+    metaloide: "271f80",
+    halogeno: "a38812",
+    metal: "826d5e",
+    postrans: "8f283b",
+    actinideo: "28758f",
+    lantanideo: "963e96",
+}
+
 elementos.map(elementos => {
     switch (elementos.tipo) {
-        case "nonmetal": elementos.tipo = "Não Metal"; elementos.cor = "328da8"; break;
-        case "noble gas": elementos.tipo = "Gás Nobre"; elementos.cor = "a35b12"; break;
-        case "alkali metal": elementos.tipo = "Metal Alcalino"; elementos.cor = "c3cc1b"; break;
-        case "alkaline earth metal": elementos.tipo = "Metal Alcalinoterroso"; elementos.cor = "5fcc1b"; break;
-        case "metalloid": elementos.tipo = "Metaloide"; elementos.cor = "271f80"; break;
-        case "halogen": elementos.tipo = "Halogênio"; elementos.cor = "a38812"; break;
-        case "transition metal": elementos.tipo = "Metal de Transição"; elementos.cor = "826d5e"; break;
-        case "metal": elementos.tipo = "Metal Pós-Transição"; elementos.cor = "8f283b"; break;
-        case "actinoid": elementos.tipo = "Actinídeo"; elementos.cor = "28758f"; break;
-        case "lanthanoid": elementos.tipo = "Lantanídeo"; elementos.cor = "963e96"; break;
+        case "nonmetal": elementos.tipo = "Não Metal"; elementos.cor = cores.ametal; break;
+        case "noble gas": elementos.tipo = "Gás Nobre"; elementos.cor = cores.nobre; break;
+        case "alkali metal": elementos.tipo = "Metal Alcalino"; elementos.cor = cores.alcalino; break;
+        case "alkaline earth metal": elementos.tipo = "Metal Alcalinoterroso"; elementos.cor = cores.alcterroso; break;
+        case "metalloid": elementos.tipo = "Metaloide"; elementos.cor = cores.metaloide; break;
+        case "halogen": elementos.tipo = "Halogênio"; elementos.cor = cores.halogeno; break;
+        case "transition metal": elementos.tipo = "Metal de Transição"; elementos.cor = cores.metal; break;
+        case "metal": elementos.tipo = "Metal Pós-Transição"; elementos.cor = cores.postrans; break;
+        case "actinoid": elementos.tipo = "Actinídeo"; elementos.cor = cores.actinideo; break;
+        case "lanthanoid": elementos.tipo = "Lantanídeo"; elementos.cor = cores.lantanideo; break;
     };
     switch (elementos.estado) {
         case "solid": elementos.estado = "Sólido"; break;
@@ -80,6 +94,7 @@ let per7 = document.getElementById("per7");
 
 let lant = document.getElementById("lant");
 let acti = document.getElementById("acti");
+
 
 let periodos = [per1, per2, per3, per4, per5, per6, per7, lant, acti];
 
@@ -180,7 +195,28 @@ function limparTabela() {
     });
 }
 
+let infoTaLa = true;
+let esconde = document.getElementById("esconde");
+let info = document.getElementById("info");
+function toggleInfo(){
+    if(infoTaLa){
+        infoTaLa = false;
+        info.style.display = "none";
+        esconde.innerHTML = "<p>&gt;</p>"
+    }
+    else{
+        infoTaLa = true;
+        info.style.display = "flex";
+        esconde.innerHTML = "<p>&lt;</p>"
+    }
+}
+esconde.addEventListener("click", () => {toggleInfo()});
+
+
 function mostrarElem(elem) {
+    infoTaLa = false;
+    toggleInfo();
+
     let elemNome = document.getElementById("elemNome");
     let elemBig = document.getElementById("elemBig");
     let elemNum = document.getElementById("elemNum");
